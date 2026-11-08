@@ -1,0 +1,146 @@
+\section{Framework}\label{sec:framework}
+
+\subsection{Attacker venue selection}\label{sec:attacker}
+
+A financially motivated attacker chooses among venues $v \in \mathcal{V}$, such as a bank's payment core, a custodial crypto-asset exchange, a cross-chain bridge, or the self-custody wallets of retail holders. Following \citet{becker1968}, the attacker compares expected gains with expected punishment, but we separate the gain into the probability of a successful compromise and the share of stolen value the attacker \emph{retains}. The expected payoff from venue $v$ is
+\begin{equation}\label{eq:payoff}
+\Pi_v \;=\; \underbrace{p_v\, V_v\, (1-\kappa_v)(1-\eta_v)}_{\Rv_v\ \text{(retained value)}} \;-\; a_v D_v \;-\; C_v ,
+\end{equation}
+where $p_v$ is the probability that a serious attempt succeeds, $V_v$ the value reachable in one breach, $\kappa_v$ the probability that stolen funds are frozen, recalled or clawed back, $\eta_v$ the share of value lost to laundering and cash-out, $a_v$ the probability that the attacker is identified and punished, $D_v$ the monetary equivalent of the sanction and $C_v$ the cost of mounting the attack. We call $1-\kappa_v$ the \emph{finality} of the venue: it is the probability that a theft, once executed, cannot be reversed. Settlement in the banking core is designed to be revocable in practice through payment recalls, correspondent freezes and anti-money-laundering controls, whereas a confirmed transfer on a public blockchain is final unless a custodian or token issuer intervenes. The attacker targets $v^\ast = \argmax_v \Pi_v$ and attacks only if $\Pi_{v^\ast} > 0$.
+
+\begin{proposition}[Exact decomposition of the retained-value gap]\label{prop:decomp}
+For any two venues $v,w$ with $\Rv_v,\Rv_w > 0$,
+\begin{equation}\label{eq:decomp}
+\ln\frac{\Rv_w}{\Rv_v} \;=\; \underbrace{\ln\frac{p_w}{p_v}}_{\Delta_{\text{breach}}} + \underbrace{\ln\frac{V_w}{V_v}}_{\Delta_{\text{value}}} + \underbrace{\ln\frac{1-\kappa_w}{1-\kappa_v}}_{\Delta_{\text{finality}}} + \underbrace{\ln\frac{1-\eta_w}{1-\eta_v}}_{\Delta_{\text{laundering}}} ,
+\end{equation}
+and the \emph{finality share} $\phi_{vw} = \Delta_{\text{finality}}/\ln(\Rv_w/\Rv_v)$ is invariant to the order in which factors are considered.
+\end{proposition}
+\begin{proof}
+$\Rv_v$ is a product of four positive factors, so its logarithm is the sum of their logarithms. Each $\Delta$ depends only on its own factor, so the attribution does not depend on an ordering, unlike sequential counterfactual decompositions of non-multiplicative objects.
+\end{proof}
+
+\begin{corollary}[Break-even finality]\label{cor:breakeven}
+$\Pi_v \ge 0$ if and only if $\kappa_v \le \kappa_v^\ast \equiv 1 - (a_v D_v + C_v)/\{p_v V_v (1-\eta_v)\}$. Raising recovery capability above $\kappa_v^\ast$ removes the venue from the attacker's choice set, whatever its balance sheet.
+\end{corollary}
+
+The decomposition explains differences in retained value; differences in $\Pi_v$ also reflect punishment and cost, which are small relative to $\Rv_v$ in our calibration. \Cref{tab:venues} lists the illustrative parameters. They encode three stylized facts: the bank core holds the most value but offers high recovery and costly cash-out; custodial exchanges and bridges offer lower recovery and cheaper laundering; and retail wallet campaigns have low success rates but almost no recovery.
+
+\begin{table}[!tbp]
+\centering\small
+\begin{threeparttable}
+\caption{Venue parameters and attacker payoffs (illustrative)}\label{tab:venues}
+\setlength{\tabcolsep}{4.2pt}
+\begin{tabular}{@{}lrrrrrrrrr@{}}
+\toprule
+Venue & $p_v$ & $V_v$ & $\kappa_v$ & $\eta_v$ & $a_v$ & $D_v$ & $C_v$ & $\Rv_v$ & $\Pi_v$ \\
+ & & (\$M) & & & & (\$M) & (\$M) & (\$M) & (\$M) \\
+\midrule
+\tabinput{tables/tab_venues.tex}
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \emph{Notes:} $p_v$ breach probability; $V_v$ value at risk; $\kappa_v$ recovery probability (one minus finality); $\eta_v$ laundering haircut; $a_v$ probability of attribution and punishment; $D_v$ sanction; $C_v$ attack cost; $\Rv_v$ retained value; $\Pi_v$ expected payoff, \cref{eq:payoff}. Values are chosen to be plausible, not estimated; calibration sources are discussed in \cref{sec:limits}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{The loss process}\label{sec:lda}
+
+Losses that reach the banking core follow a loss-distribution model. In year $t$ the number of loss-causing incidents is $N_t \sim \mathrm{Poisson}(\lambda)$. An incident is a \emph{tail event} with probability $\pi$, in which case its pre-cascade loss is Pareto, $\Prob(Y>y) = (y/x_m)^{-\alpha}$ for $y \ge x_m$; otherwise it is log-normal, $Z = m_0 \exp(\nu\,\varepsilon)$ with $\varepsilon \sim N(0,1)$. A large incident can cascade: if the pre-cascade loss $X_0$ exceeds a trigger $\tau$, then with probability $\pi_c$ it is multiplied by $M = 1+Q$, where $Q$ is exponential with mean $\bar m - 1$. The incident loss and the annual loss are
+\begin{equation}\label{eq:lda}
+X = X_0\, M^{J}, \qquad J \sim \mathrm{Bernoulli}\big(\pi_c \ind\{X_0 > \tau\}\big), \qquad S_t = \sum_{i=1}^{N_t} X_{t,i} .
+\end{equation}
+\Cref{tab:lda} reports the parameters: four loss-causing incidents per year, a log-normal body with a median of \$30 million, a 5\% tail share with Pareto index $\alpha = 1.6$, and cascades that triple the expected loss of 30\% of incidents above \$1 billion. The cascade multiplier is a reduced-form stand-in for the network amplification analysed in \cref{sec:contagion}.
+
+\begin{table}[!tbp]
+\centering\small
+\begin{threeparttable}
+\caption{Loss-process parameters (illustrative)}\label{tab:lda}
+\begin{tabular}{@{}llr@{}}
+\toprule
+Symbol & Meaning & Value \\
+\midrule
+$\lambda$ & loss-causing incidents per year & 4 \\
+$m_0,\ \nu$ & median and log-scale dispersion of the log-normal body & \$30M, 1.4 \\
+$\pi$ & share of incidents drawn from the Pareto tail & 0.05 \\
+$x_m,\ \alpha$ & Pareto scale and tail index & \$200M, 1.6 \\
+$\tau$ & cascade trigger & \$1{,}000M \\
+$\pi_c,\ \bar m$ & cascade probability above $\tau$ and mean multiplier & 0.30, 3 \\
+\midrule
+$\xi = 1/\alpha$ & planted shape parameter of incident and annual losses & \xiTrue \\
+\bottomrule
+\end{tabular}
+\end{threeparttable}
+\end{table}
+
+\begin{lemma}[Planted tail index]\label{lem:tail}
+Under \cref{eq:lda} with $\alpha > 1$, $\Prob(X > x) \sim c\,x^{-\alpha}$ as $x\to\infty$ with $c = \pi x_m^{\alpha}\{1-\pi_c + \pi_c \E[M^{\alpha}]\}$, and $\Prob(S_t > x) \sim \lambda\,\Prob(X > x)$. Both incident and annual losses therefore lie in the Fr\'echet domain of attraction with shape $\xi = 1/\alpha$.
+\end{lemma}
+\begin{proof}[Proof sketch]
+The log-normal component has $\Prob(Z>x) = o(x^{-\alpha})$. On the tail branch, a pre-cascade loss below $\tau$ can exceed a large $x$ only if $M > x/\tau$, an event of exponentially small probability. Above $\tau$, $M$ is independent of $Y$ with $\E[M^{\alpha+\epsilon}]<\infty$, so Breiman's lemma \citep{breiman1965} gives $\Prob(YM > x) \sim \E[M^\alpha]\,\Prob(Y > x)$; mixing the cascade and no-cascade branches yields the constant $c$. A regularly varying distribution is subexponential, and for a compound Poisson sum of subexponential variables $\Prob(S_t > x) \sim \E[N_t]\,\Prob(X>x)$ \citep[Section~1.3]{embrechts1997}.
+\end{proof}
+
+\begin{remark}[Pre-asymptotic distortions]\label{rem:kink}
+\Cref{lem:tail} is asymptotic, and two features of the loss process distort the local shape at the thresholds an analyst can afford. The log-normal body decays faster than any power law, so where it still supplies a large share of exceedances the tail looks \emph{lighter} than $x^{-\alpha}$. The cascade, by contrast, moves probability mass from below $\tau$ to well above it, which flattens the log-survival curve above the trigger, so a threshold placed just below $\tau$ sees a tail that looks \emph{heavier}. A generalized Pareto fit can therefore understate or overstate $\xi$ depending on where the threshold falls; \cref{sec:benchmark,sec:single,sec:coverage} document both cases. Real loss data plausibly contain similar kinks, for instance where insurance limits, regulatory reporting thresholds or incident-response capacity change behaviour.
+\end{remark}
+
+\subsection{Peaks-over-threshold inference}\label{sec:evt}
+
+An analyst observes a record of $R$ years of incident losses, chooses a threshold $u$, and models the $k$ exceedances $y_j = x_j - u$ as arising from a Poisson process with rate $\lambda_u$ per year and generalized Pareto sizes, $\bar G(y) = (1+\xi y/\sigma)^{-1/\xi}$ \citep{balkema1974,pickands1975,davison1990}. The log-likelihood is
+\begin{equation}\label{eq:loglik}
+\mathcal{L}(\lambda_u,\xi,\sigma) \;=\; k\ln\lambda_u - \lambda_u R - k\ln\sigma - \Big(1+\frac{1}{\xi}\Big)\sum_{j=1}^{k}\ln\!\Big(1+\frac{\xi y_j}{\sigma}\Big).
+\end{equation}
+The rate estimate is $\hat\lambda_u = k/R$. For $(\xi,\sigma)$ we use the reduction of \citet{grimshaw1993}: with $\theta = \xi/\sigma$ and $\hat H(\theta) = \sum_j \ln(1+\theta y_j)$, the profile log-likelihood is $\mathcal{L}^\ast(\theta) = -k\ln\{\hat H(\theta)/(k\theta)\} - \hat H(\theta) - k$, maximized over $\theta \in (-1/y_{\max},\infty)$, after which $\hat\xi = \hat H(\hat\theta)/k$ and $\hat\sigma = \hat\xi/\hat\theta$. We search a global grid on both branches of $\theta$, refine locally, and compare with the exponential limit $\xi = 0$; the resulting maximum matches SciPy's optimizer to $10^{-3}$ in log-likelihood in all our checks while being robust to multimodality.
+
+The $T$-year \emph{incident-level} return level, the loss exceeded by the worst incident of a year with probability $1/T$, solves $\lambda_u \bar G(\psi_T - u) = r_T$ with $r_T = -\ln(1-1/T)$:
+\begin{equation}\label{eq:rl}
+\psi_T \;=\; u + \frac{\sigma}{\xi}\left[\Big(\frac{\lambda_u}{r_T}\Big)^{\xi} - 1\right].
+\end{equation}
+Solvency and stress-testing questions, however, concern \emph{annual aggregate} losses. Because one big incident dominates a heavy-tailed year, the two are close at long horizons, but not at moderate ones.
+
+\begin{approximation}[Second-order compound-sum correction]\label{app:shift}
+Let $S = \sum_{i=1}^{N} X_i$ with $N\sim\mathrm{Poisson}(\lambda)$ and i.i.d.\ $X_i$ with mean $\mu<\infty$, a regularly varying tail of index $\alpha > 1$ and an eventually monotone density $f$. Then
+\begin{equation}\label{eq:shift}
+\Prob(S > x) = \lambda \bar F(x) + \lambda^2 \mu f(x) + o\{f(x)\} \;\approx\; \lambda \bar F(x - \lambda\mu),
+\qquad\text{so}\qquad \psi^{S}_{T} \;\approx\; \psi_T + \E[S].
+\end{equation}
+\end{approximation}
+\noindent \Cref{app:derivation} gives a heuristic derivation based on the single-big-jump structure of subexponential sums and the Mecke formula for Poisson processes: the other incidents of a year in which one incident is extreme form an independent copy of the annual loss, whose mean is $\lambda\mu$. In words, the worst year is the worst incident plus an ordinary year's worth of everything else. We estimate $\E[S]$ by the record's mean annual loss $\bar s$ and report $\hat\psi_T + \bar s$. Because $\lambda\mu$ is fixed while $\psi_T$ grows without bound, the correction matters at moderate return periods and fades at long ones.
+
+\subsection{Interval estimators}\label{sec:intervals}
+
+We compare three ways of attaching a nominal 95\% interval to the return level.
+
+\paragraph{Delta method.} The maximum-likelihood estimator has asymptotic covariance $\Var(\hat\lambda_u) = \lambda_u/R$ and, independently, $\Var(\hat\sigma,\hat\xi) = k^{-1}\left(\begin{smallmatrix} 2\sigma^2(1+\xi) & -\sigma(1+\xi) \\ -\sigma(1+\xi) & (1+\xi)^2 \end{smallmatrix}\right)$ for $\xi > -1/2$ \citep{smith1987}. With $\nabla\psi_T$ the gradient of \cref{eq:rl} (\cref{app:gradients}), the standard error is $\widehat{\mathrm{se}} = (\nabla\psi_T^\top \widehat\Sigma\, \nabla\psi_T)^{1/2}$ and the interval, built on the log scale to remain positive, is $\big[\hat\psi_T e^{-1.96\,\widehat{\mathrm{se}}/\hat\psi_T},\ \hat\psi_T e^{1.96\,\widehat{\mathrm{se}}/\hat\psi_T}\big] + \bar s$. It is symmetric on the log scale by construction.
+
+\paragraph{Profile likelihood.} Substituting $\sigma(\psi,\lambda_u,\xi) = \xi(\psi-u)/\{(\lambda_u/r_T)^{\xi}-1\}$ into \cref{eq:loglik} and maximizing over the nuisance parameters gives the profile log-likelihood
+\[
+\mathcal{L}_p(\psi) = \max_{\lambda_u,\,\xi}\ \mathcal{L}\{\lambda_u,\xi,\sigma(\psi,\lambda_u,\xi)\}.
+\]
+By Wilks' theorem \citep{wilks1938} the interval is
+\begin{equation}\label{eq:profile}
+\Big\{\psi : 2\big[\mathcal{L}(\hat\lambda_u,\hat\xi,\hat\sigma) - \mathcal{L}_p(\psi)\big] \le \chi^2_{1,0.95}\Big\} + \bar s .
+\end{equation}
+We profile $\xi$ over $[-0.45, 4]$ on a grid of step $0.015$ and $\lambda_u$ over $\hat\lambda_u e^{\pm 4/\sqrt{k}}$ on nine nodes, refine the maximum parabolically, and locate the two roots by Brent's method on $\ln(\psi-u)$. For $k \gtrsim 150$ the rate is held at $\hat\lambda_u$, whose relative standard error $1/\sqrt{k}$ is then below 8\% and negligible next to the shape uncertainty. The upper limit is declared unbounded if no root exists below $10^5\hat\psi_T$; this never occurred.
+
+\paragraph{Parametric bootstrap.} We draw $B = \BootB$ samples with $k^\ast\sim\mathrm{Poisson}(\hat\lambda_u R)$ exceedances from $\GPD(\hat\xi,\hat\sigma)$, refit, recompute \cref{eq:rl} and take the 2.5\% and 97.5\% quantiles of the resulting $\hat\psi^\ast_T$, plus $\bar s$ \citep{davison1997}.
+
+\subsection{Interbank contagion}\label{sec:contagion}
+
+A cyber loss that destroys equity at one bank is transmitted to the banks that hold claims on it. Let $\mathcal{E}_i$ denote the equity of bank $i$, $W_{ij}$ the share of $i$'s interbank claims that sit on $j$ (so $W$ is row-stochastic), $\omega_i$ the size of $i$'s interbank book relative to the system average, and $\ell$ a system-wide scale of interbank exposure relative to equity. The exposure matrix is $\Lambda = \ell\, \Omega W$ with $\Omega = \mathrm{diag}(\omega_i)$, so that $\Lambda_{ij}$ is $i$'s claim on $j$ as a multiple of $i$'s equity. Let $h_i(t)\in[0,1]$ be the share of $i$'s equity lost after round $t$. Linear DebtRank \citep{bardoscia2015} marks claims down in proportion to the debtor's new equity losses:
+\begin{equation}\label{eq:debtrank}
+h_i(t+1) = \min\Big\{1,\; h_i(t) + \sum_j \Lambda_{ij}\big[h_j(t)-h_j(t-1)\big]\Big\},\qquad h(0)=0,\quad h(1)=h_0,
+\end{equation}
+where $h_0$ holds the direct cyber shock. We summarize a cascade by the \emph{contagion multiplier}, the ratio of total to direct equity losses,
+\begin{equation}\label{eq:mult}
+\Mult = \frac{\sum_i \mathcal{E}_i\, h_i(\infty)}{\sum_i \mathcal{E}_i\, h_i(1)} .
+\end{equation}
+
+\begin{proposition}[Linear regime and instability]\label{prop:debtrank}
+(i) If $\rho(\Lambda) < 1$ and no bank saturates, then $h(t) = \sum_{s=0}^{t-1}\Lambda^s h_0 \to (I-\Lambda)^{-1}h_0$. (ii) If $\rho(\Lambda) > 1$ and the shock reaches the strongly connected component that carries the Perron eigenvalue, the increments $h(t+1)-h(t)$ grow geometrically at rate $\rho(\Lambda)$ until banks saturate at $h_i = 1$. The critical exposure scale is therefore $\ell^\ast = 1/\rho(\Omega W)$.
+\end{proposition}
+\begin{proof}
+Without saturation, \cref{eq:debtrank} is linear in the increments: $\delta(t+1) = \Lambda\,\delta(t)$ with $\delta(1) = h_0$, so $\delta(t) = \Lambda^{t-1}h_0$ and $h(t)$ is a partial Neumann series, which converges to $(I-\Lambda)^{-1}h_0$ when $\rho(\Lambda)<1$. If $\rho(\Lambda)>1$, the Perron--Frobenius theorem gives a non-negative eigenvector with eigenvalue $\rho(\Lambda)$; any non-negative $h_0$ with positive weight on that component makes $\Lambda^{t}h_0$ grow like $\rho(\Lambda)^t$, so the linear dynamics cannot remain below one. Since $\rho(\ell\,\Omega W) = \ell\,\rho(\Omega W)$, the threshold in $\ell$ is $1/\rho(\Omega W)$; see also \citet{bardoscia2017}.
+\end{proof}
+
+We study a core--periphery system of \nBanks{} banks: five core banks with total assets between \$0.8 and \$3 trillion and capital ratios of 4--8\%, and 23 periphery banks with assets between \$15 and \$250 billion and capital ratios of 6--14\%. Core banks are densely interconnected (link probability 0.95), core and periphery banks connect with probability 0.2 and periphery banks with each other with probability 0.035; every periphery bank lends to and borrows from at least one core bank. Lending weights are proportional to the borrower's assets times a log-normal factor with log-scale dispersion 0.9, and interbank intensities $\omega_i$ are drawn from $[1, 1.5]$ for core and $[0.2, 1]$ for periphery banks. The generator is seeded and replicates the companion web instrument bit for bit. We consider two shocks, each wiping out 20\% of the equity of the banks hit: an attack on a single bank, and an attack on a shared technology vendor whose compromise hits eight banks (30\% of the system) at once, the third-party concentration channel addressed by \citet{dora2022}.

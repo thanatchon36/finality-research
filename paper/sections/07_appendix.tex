@@ -1,0 +1,73 @@
+\section{Derivation of the compound-sum correction}\label{app:derivation}
+
+We give a heuristic derivation of \cref{app:shift}; a rigorous treatment of second-order asymptotics for random sums under general conditions is beyond our scope. Let $F$ have finite mean $\mu$, a regularly varying tail $\bar F(x) = x^{-\alpha}L(x)$ with $\alpha > 1$, and an eventually monotone density $f$, so that $f(x) \sim \alpha \bar F(x)/x$.
+
+\paragraph{Fixed number of summands.} Let $S_n = X_1 + \dots + X_n$. For large $x$ the event $\{S_n > x\}$ is dominated by configurations in which exactly one summand is large \citep[Section~1.3]{embrechts1997}, so
+\[
+\Prob(S_n > x) \;=\; \sum_{i=1}^{n} \Prob\big(X_i + S_{n,-i} > x,\ S_{n,-i} \le x/2\big) + O\big(\bar F(x/2)^2\big),
+\]
+where $S_{n,-i}$ is the sum of the other $n-1$ summands and is independent of $X_i$. Conditioning on $S_{n,-i}$ and expanding $\bar F(x - s) = \bar F(x) + s f(x) + R(x,s)$ for $0 \le s \le x/2$,
+\[
+\begin{aligned}
+\Prob\big(X_i + S_{n,-i} > x,\ S_{n,-i} \le x/2\big) ={}& \bar F(x)\,\Prob(S_{n,-i}\le x/2) + f(x)\,\E\big[S_{n,-i};\, S_{n,-i}\le x/2\big]\\
+&+ \E\big[R(x,S_{n,-i});\, S_{n,-i}\le x/2\big].
+\end{aligned}
+\]
+Because $\alpha>1$, the truncated mean converges to $(n-1)\mu$; the truncation error in the first term is $O(\bar F(x)^2)$; and the remainder is of order $\E[S_{n,-i}^2;\, S_{n,-i}\le x/2]\,|f'(x)| = O(x^{2-\alpha}\cdot x^{-\alpha-2}) = O(x^{-2\alpha})$, which is $o\{f(x)\} = o(x^{-\alpha-1})$ precisely when $\alpha > 1$. Hence
+\[
+\Prob(S_n > x) = n\bar F(x) + n(n-1)\,\mu f(x) + o\{f(x)\}.
+\]
+
+\paragraph{Poisson number of summands.} Mixing over $N \sim \mathrm{Poisson}(\lambda)$, and assuming the remainders are uniformly controlled, which the light tail of $N$ permits,
+\[
+\Prob(S > x) = \E[N]\,\bar F(x) + \E[N(N-1)]\,\mu f(x) + o\{f(x)\} = \lambda\bar F(x) + \lambda^2\mu f(x) + o\{f(x)\}.
+\]
+The identity $\E[N(N-1)] = \lambda\,\E[N]$ has a transparent meaning: given that a particular incident occurs, the remaining incidents of the year again form a Poisson process with intensity $\lambda$ (the Slivnyak--Mecke theorem), so the ``ordinary year'' that accompanies the big incident is an independent copy of $S$ with mean $\lambda\mu$. Reversing the first-order Taylor expansion,
+\[
+\lambda\bar F(x) + \lambda^2\mu f(x) = \lambda\big[\bar F(x) + (\lambda\mu) f(x)\big] = \lambda\,\bar F(x - \lambda\mu) + o\{f(x)\}.
+\]
+Setting $\Prob(S > \psi^S_T) = r_T$ and comparing with the incident-level definition $\lambda\bar F(\psi_T) = r_T$ gives $\psi^S_T = \psi_T + \lambda\mu$ up to terms of smaller order, that is, $\psi^S_T \approx \psi_T + \E[S]$. Because $\lambda\mu$ is fixed while $\psi_T$ grows like $T^{\xi}$, the relative size of the correction decays as $T^{-\xi}$, consistent with the numerical check in \cref{sec:benchmark}.
+
+\section{Delta-method gradients}\label{app:gradients}
+
+Write $m = \lambda_u/r_T$, so that $\psi_T = u + (\sigma/\xi)(m^{\xi}-1)$. For $\xi \neq 0$,
+\[
+\frac{\partial\psi_T}{\partial\lambda_u} = \frac{\sigma\, m^{\xi-1}}{r_T},\qquad
+\frac{\partial\psi_T}{\partial\sigma} = \frac{m^{\xi}-1}{\xi},\qquad
+\frac{\partial\psi_T}{\partial\xi} = -\frac{\sigma}{\xi^{2}}\big(m^{\xi}-1\big) + \frac{\sigma}{\xi}\, m^{\xi}\ln m ,
+\]
+and in the limit $\xi \to 0$, where $\psi_T = u + \sigma\ln m$, the gradient is $(\sigma/\lambda_u,\ \ln m,\ \tfrac12\sigma(\ln m)^2)$. The variance estimate is
+\[
+\widehat{\Var}(\hat\psi_T) = \Big(\frac{\partial\psi_T}{\partial\lambda_u}\Big)^{2}\frac{\hat\lambda_u}{R} + \bm{g}^{\top}\,\frac{1}{k}\begin{pmatrix} 2\hat\sigma^2(1+\hat\xi) & -\hat\sigma(1+\hat\xi)\\ -\hat\sigma(1+\hat\xi) & (1+\hat\xi)^2\end{pmatrix}\bm{g},\qquad \bm{g} = \Big(\frac{\partial\psi_T}{\partial\sigma},\frac{\partial\psi_T}{\partial\xi}\Big)^{\!\top},
+\]
+evaluated at the estimates, with the rate independent of the size parameters. The interval is formed on the log scale as described in \cref{sec:intervals}.
+
+\section{Full coverage results}\label{app:full}
+
+\begin{table}[!tbp]
+\centering\footnotesize
+\begin{threeparttable}
+\caption{All coverage cells}\label{tab:full}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrlrcrrrrr@{}}
+\toprule
+Exp. & $R$ & $\bar k$ & $T$ & Method & Cov.\ (\%) & Wilson 95\% & Below (\%) & Above (\%) & Up/low & Score & $\hat\psi/\psi$ \\
+\midrule
+\tabinput{tables/tab_coverage_full.tex}
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \emph{Notes:} \Reps{} records per cell, of which at least \minN{} yield an interval (records with fewer than eight exceedances are discarded). ``Below'' and ``Above'' are the shares of intervals lying wholly below or above the truth. ``Up/low'' is the median ratio of upper to lower limit; ``Score'' the mean $\log_{10}$ interval score of \cref{eq:score}; $\hat\psi/\psi$ the median ratio of point estimate to truth. No profile-likelihood interval was unbounded.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\section{Implementation and verification}\label{app:implementation}
+
+\paragraph{Estimation.} The generalized Pareto maximum is located on a grid of 210 values of $\theta = \xi/\sigma$ spanning both branches, refined on an 81-point local grid with a parabolic polish, and compared with the exponential limit. The profile likelihood of the return level uses a $297 \times 9$ grid in $(\xi, \lambda_u)$ with separable parabolic refinement of the maximum; Brent's method locates each root of the likelihood-ratio equation to a tolerance of $10^{-4}$ in $\ln(\psi - u)$.
+
+\paragraph{Unit tests.} Nineteen tests cover the package. They verify that the maximum-likelihood estimates recover known parameters and attain at least the log-likelihood of SciPy's optimizer for $\xi \in \{-0.2, 0.2, 0.625, 1.2\}$; that \cref{eq:rl} matches SciPy's generalized Pareto quantile function to a relative error of $10^{-12}$; that the EVT-implied return period inverts the return level; that all three intervals bracket the point estimate and that the profile interval is right-skewed for heavy tails; that delta and profile intervals agree within 5\% with 3{,}000 exceedances; that the Hill estimator recovers a planted Pareto index; that the threshold rule enforces the minimum number of exceedances; that the attacker decomposition is exact and the break-even recovery zeroes the payoff; that annual losses equal the sums of incident losses; and that DebtRank reproduces the closed form $(I-\Lambda)^{-1}h_0$ to $10^{-8}$ in the linear regime and produces defaults in the supercritical regime.
+
+\paragraph{Cross-validation with the web instrument.} The network generator ports the companion web instrument's pseudo-random number generator bit for bit, with the same order of draws and the same stopping rule. A dedicated test pins the instrument's published numbers for seed 7: $\rho(\Omega W) = \rhoOne$; the three most systemic banks \topOneName{} ($\times\topOneMult$), \topTwoName{} ($\times\topTwoMult$) and \topThreeName{} ($\times\topThreeMult$); direct and total losses of \scBigDirect{} and \scBigTotal{} when the largest bank is hit; and a multiplier of \scVendHighMult{} with \scVendHighDef{} defaults for the shared-vendor scenario at $\ell = 1.2$. Two independent implementations, in JavaScript and Python, therefore agree on every contagion result reported here.
+
+\paragraph{Reproduction.} Running \texttt{pytest} executes the tests in about one second, and \texttt{run\_study.py} reproduces every result from the master seed in about five minutes on one CPU core; its \texttt{budget} option splits the coverage study into resumable chunks whose per-record intervals are cached. The scripts \texttt{analysis.py} and \texttt{make\_figures.py} in the \texttt{paper} folder regenerate the tables, number macros and figures of this paper; the figure script replays the study's seeds, asserts that it reproduces the stored estimates exactly, and runs the automated overlap check on every figure.

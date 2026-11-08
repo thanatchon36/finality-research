@@ -1,0 +1,23 @@
+\section{Experimental design}\label{sec:design}
+
+The coverage study asks a simple question: if an analyst follows standard practice on a record of realistic length, how often does a nominal 95\% interval for an extreme return level contain the truth? Answering it requires a truth, which is why the loss process has a planted tail. We run two experiments that isolate different sources of error.
+
+\paragraph{Experiment A: a well-specified tail.} Exceedances of a known threshold $u = \$400$ million arrive at rate $\lambda_u = 0.5$ per year with $\GPD(\xi = 0.625, \sigma = \$250\text{ million})$ sizes, and the analyst fits exactly this model. Records last $R \in \{30, 100, 300\}$ years, giving on average $k \approx 15$, 50 and 150 exceedances. The targets are the exact incident-level return levels from \cref{eq:rl}, \truthAC{} at $T = 100$ and \truthAK{} at $T=1{,}000$, and no compound-sum correction is applied. Any shortfall in coverage here is attributable to the interval method alone. Records with fewer than eight exceedances, to which no analyst would fit a tail, are discarded; this affects 1.8\% of the 30-year records and none of the longer ones.
+
+\paragraph{Experiment B: the full pipeline.} Records of $R \in \{30, 100, 1{,}000\}$ years are simulated from the loss process of \cref{sec:lda}. The analyst sees incident losses, places the threshold at the 85th, 95th or 98th percentile of the record's incidents respectively (lowering it if necessary to keep at least 15 exceedances), fits the Poisson--GPD model, and reports $\hat\psi_T + \bar s$ with the three intervals. The targets are the \emph{annual-aggregate} return levels computed as the $(1-1/T)$ quantiles of \TruthYears{} simulated years: \truthC{} at $T=100$ and \truthK{} at $T = 1{,}000$. Errors here combine interval error, threshold bias from the body and the cascade kink (\cref{rem:kink}), and the approximation of \cref{app:shift}, which is what a practitioner faces.
+
+\paragraph{Performance measures.} For each of the twelve cells (two experiments, three record lengths, two return periods) we simulate \Reps{} independent records and compute, for each method:
+\begin{enumerate}[(i)]
+\item \emph{coverage}, the share of intervals containing the truth, with a Wilson score interval \citep{wilson1927};
+\item the \emph{one-sided miss rates}, the shares of intervals lying wholly below the truth (risk understated) and wholly above it (risk overstated);
+\item the \emph{median width ratio} of upper to lower limit, a scale-free measure of how much an interval admits;
+\item the mean \emph{interval score} of \citet{gneiting2007}, a strictly proper scoring rule for central $(1-\alpha)$ intervals, computed on the $\log_{10}$ scale so that it is invariant to units:
+\begin{equation}\label{eq:score}
+\mathrm{IS}_\alpha(L,U;\psi) = (\log U - \log L) + \tfrac{2}{\alpha}\,(\log L - \log\psi)_+ + \tfrac{2}{\alpha}\,(\log\psi - \log U)_+ ,\qquad \alpha = 0.05,
+\end{equation}
+where $[L, U]$ is the interval; lower is better, and the score rewards narrow intervals only when they also cover;
+\item \emph{paired McNemar tests} \citep{mcnemar1947}: because the three methods are applied to the same records, coverage differences are tested with an exact binomial test on the discordant pairs.
+\end{enumerate}
+With \Reps{} records per cell, the Monte Carlo standard error of a coverage rate is at most 1.6 percentage points, and about 0.7 points near the nominal level.
+
+\paragraph{Implementation and verification.} Each cell draws its records from its own child of a single NumPy seed sequence, so results do not depend on execution order and every record can be regenerated. The study evaluates 36{,}000 intervals and about 1.2 million bootstrap refits; a profile interval takes 15--80 milliseconds. The implementation is covered by unit tests that check, among other things, that our likelihood maximum matches SciPy's in four parameter configurations, that \cref{eq:rl} agrees with SciPy's generalized Pareto quantile function to $10^{-12}$, that delta and profile intervals agree within 5\% with 3{,}000 exceedances, that the Hill estimator recovers a known index, and that DebtRank matches the closed form of \cref{prop:debtrank}(i) to $10^{-8}$. \Cref{app:implementation} gives details.

@@ -1,0 +1,135 @@
+\pdfoutput=1
+\documentclass[11pt]{article}
+
+% ---------------------------------------------------------------- arXiv preprint layout
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{txfonts}                 % Times text and mathematics
+\let\openbox\relax                  % txfonts and amsthm both define \openbox
+\usepackage{amsthm,mathtools,bm}
+\usepackage[letterpaper,left=0.85in,right=0.85in,top=0.95in,bottom=0.9in,headheight=14pt,headsep=14pt,footskip=26pt]{geometry}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs,threeparttable,multirow,makecell,tabularx}
+\usepackage[font=small,labelfont=bf,labelsep=colon,skip=5pt]{caption}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,backgrounds}
+\usepackage[shortlabels]{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage[authoryear,round]{natbib}
+\usepackage[colorlinks=true,linkcolor=black!70!blue,citecolor=black!70!blue,urlcolor=black!70!blue]{hyperref}
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}
+\hypersetup{pdftitle={False Confidence in the Tail: Finality, Extreme-Value Uncertainty, and Contagion in Banking-Sector Cyber Risk},
+  pdfauthor={Thanatchon Chongmankhong}, pdfsubject={Preprint},
+  pdfkeywords={cyber risk, extreme value theory, return levels, profile likelihood, interval coverage, systemic risk, DebtRank}}
+
+% dense, journal-quality page filling
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.7}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.85}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\setlength{\textfloatsep}{11pt plus 2pt minus 3pt}
+\setlength{\floatsep}{9pt plus 2pt minus 2pt}
+\setlength{\intextsep}{9pt plus 2pt minus 2pt}
+\setlist{itemsep=1pt,topsep=3pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\arraystretch}{1.1}
+\setlength{\bibsep}{1.5pt plus 0.5pt}
+\renewcommand{\bibfont}{\small}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{11pt plus 3pt minus 2pt}{5pt plus 1pt}
+\titlespacing*{\subsection}{0pt}{8pt plus 2pt minus 2pt}{3pt plus 1pt}
+\titlespacing*{\paragraph}{0pt}{5pt plus 2pt minus 1pt}{0.8em}
+
+\definecolor{violetX}{HTML}{5b3df0}
+\definecolor{hotX}{HTML}{d1402a}
+\definecolor{inkX}{HTML}{122030}
+\definecolor{faintX}{HTML}{8a99ab}
+
+\newcommand{\shorttitle}{False Confidence in the Tail}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\scshape A preprint}
+\fancyhead[R]{\footnotesize\itshape\shorttitle}
+\fancyfoot[C]{\footnotesize\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{firstpage}{\fancyhf{}\fancyfoot[C]{\footnotesize\thepage}\renewcommand{\headrulewidth}{0pt}}% first page: no running head, no rule
+
+% ---------------------------------------------------------------- theorem-like environments
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{approximation}{Approximation}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\crefname{approximation}{Approximation}{Approximations}
+
+% ---------------------------------------------------------------- notation
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\GPD}{\mathrm{GPD}}
+\newcommand{\Rv}{\mathcal{R}}
+\newcommand{\Mult}{\mathcal{M}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\dd}{\,\mathrm{d}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\makeatletter
+\newcommand{\tabinput}[1]{\@@input #1 }% primitive input: expandable inside tabular, so booktabs rules may follow
+\makeatother
+\input{tables/numbers.tex}
+
+\begin{document}
+\thispagestyle{firstpage}
+
+% ---------------------------------------------------------------- title block
+\begin{center}
+\rule{\textwidth}{1.2pt}\par\vspace{10pt}
+{\LARGE\bfseries False Confidence in the Tail:\par}\vspace{5pt}
+{\Large\bfseries Finality, Extreme-Value Uncertainty, and Contagion\\[2pt] in Banking-Sector Cyber Risk\par}
+\vspace{9pt}\rule{\textwidth}{0.4pt}\par\vspace{12pt}
+{\large\bfseries Thanatchon Chongmankhong\textsuperscript{$\ast$}\par}
+\vspace{3pt}{\small November 2026\par}
+\end{center}
+{\renewcommand{\thefootnote}{\fnsymbol{footnote}}\footnotetext[1]{Preprint. The simulation code, a first draft of the text and the figures were prepared with the assistance of an AI system (Claude, Anthropic). The author is responsible for the content, including the verification of every reference. All model parameters are illustrative.}}
+
+\vspace{2pt}
+\begin{center}{\bfseries Abstract}\end{center}
+\vspace{-5pt}
+\begin{quote}\small
+Supervisors and insurers are increasingly asked when a catastrophic cyber event will strike the banking system and how large it will be. The defensible answer is a return period with an honest interval. We show that the intervals in standard use are badly overconfident, and we connect this to the economics of where attackers strike and to how losses spread. First, a rational-choice model of venue selection shows that transaction finality, not breach difficulty, accounts for \shareFinality\% of the log payoff gap between a bank core and a cross-chain bridge; at an 80\% recovery probability the bank is loss-making to attack, and it becomes profitable only below a recovery probability of \breakEven. Second, a loss model with a planted Pareto tail ($\xi = \xiTrue$) provides a known truth against which peaks-over-threshold inference can be audited, and we derive a second-order compound-sum correction that converts incident-level return levels into annual-aggregate ones. Third, in a Monte Carlo study with \Reps{} records per design cell, nominal 95\% delta-method and parametric-bootstrap intervals for the 1-in-1,000-year loss cover the truth only \covBThirtyDeltaK\% and \covBThirtyBootstrapK\% of the time from 30-year records, every miss lying below the truth, while the median point estimate is \medRatioBThirtyK{} times the true loss. Profile-likelihood intervals raise coverage to between \covBThirtyProfileK\% and \covAThreeHundredProfileK\% and roughly halve the proper interval score, at the price of upper limits up to three orders of magnitude above their lower limits. Finally, a linear DebtRank model of interbank exposures exhibits a sharp phase transition where the spectral radius of the exposure matrix crosses one, and systemic importance tracks interconnection rather than size. All parameters are illustrative; the contribution is methodological, and every number is reproducible from published code and seeds.
+
+\vspace{5pt}
+\noindent\textbf{Keywords:} cyber risk $\cdot$ extreme value theory $\cdot$ return levels $\cdot$ profile likelihood $\cdot$ interval coverage $\cdot$ systemic risk $\cdot$ DebtRank $\cdot$ security economics $\cdot$ crypto-assets\\[2pt]
+\noindent\textbf{JEL codes:} G21, G28, G32, C15, C46
+\end{quote}
+\vspace{2pt}
+
+\input{sections/01_introduction}
+\input{sections/02_literature}
+\input{sections/03_framework}
+\input{sections/04_design}
+\input{sections/05_results}
+\input{sections/06_discussion}
+
+\section*{Data and code availability}
+All results are produced by an open Python package (\texttt{finality}) with a driver script that regenerates every table and figure from a single master seed (20261108). The package contains 19 unit tests, including a bit-exact cross-validation of the network generator against an interactive web implementation of the same models. The coverage study caches per-record intervals, so it can be resumed and audited record by record; on one CPU core the full study takes about five minutes. The scripts \texttt{paper/analysis.py} and \texttt{paper/make\_figures.py} produce all numbers quoted in the text, which enter the manuscript as generated macros rather than transcriptions; the figure script also runs an automated check that no text in any figure overlaps other text or plotted data.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\appendix
+\input{sections/07_appendix}
+
+\end{document}
