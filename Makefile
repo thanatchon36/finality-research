@@ -1,11 +1,38 @@
-.PHONY: test study quick paper arxiv
-test:
-	python -m pytest -q
-quick:
-	python run_study.py --quick --out results-quick
-study:
-	python run_study.py
-paper:
-	python paper/analysis.py && python paper/make_figures.py && cd paper && latexmk -pdf -interaction=nonstopmode paper.tex
-arxiv:
-	sh paper/make_arxiv.sh
+PY ?= .venv/bin/python
+
+.PHONY: setup test quick study figures paper web banner arxiv all clean
+
+setup:          ## create venv and install the package (needs uv)
+	uv venv .venv --python 3.12
+	uv pip install --python .venv/bin/python -e ".[dev,paper]"
+
+test:           ## 19 unit tests, about 1 s
+	$(PY) -m pytest -q
+
+quick:          ## 15-second smoke run of the study -> results-quick/
+	$(PY) run_study.py --quick --out results-quick
+
+study:          ## full Monte Carlo study from master seed 20261108 (~5 min, 1 core; resumable)
+	$(PY) run_study.py
+
+figures:        ## paper tables, number macros and vector figures (with the overlap check)
+	$(PY) paper/analysis.py
+	$(PY) paper/make_figures.py
+
+paper: figures  ## compile paper/paper.pdf (latexmk + pdfLaTeX, needs TeX Live)
+	cd paper && latexmk -pdf -interaction=nonstopmode paper.tex
+
+web:            ## web reader -> docs/paper/index.html (pandoc; copies the current paper.pdf)
+	$(PY) scripts/paper_web.py
+
+banner:         ## README banner -> docs/assets/banner.png
+	$(PY) scripts/make_banner.py
+
+arxiv:          ## arXiv source archive, .bbl included -> paper/arxiv-source.zip
+	sh scripts/make_arxiv.sh
+
+all: study paper web
+
+clean:
+	rm -rf results-quick paper/arxiv paper/arxiv-source.zip
+	cd paper && rm -f *.aux *.log *.out *.fls *.fdb_latexmk *.bbl *.blg *.synctex.gz

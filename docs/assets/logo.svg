@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="t">
+  <title id="t">finality</title>
+  <rect width="128" height="128" rx="28" fill="#03060d"/>
+  <!-- axes -->
+  <path d="M22 26 V102 H106" fill="none" stroke="#2b3c5c" stroke-width="3" stroke-linecap="round"/>
+  <!-- heavy-tailed loss density: body, then a long Pareto tail -->
+  <path d="M26 98 C30 40 38 34 44 52 C50 70 60 84 74 90 C86 95 96 97 104 98" fill="none" stroke="#f5a623" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- the 1-in-1,000-year loss, far in the tail -->
+  <path d="M94 32 V98" stroke="#9fb0d0" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+  <!-- a short, overconfident interval that stops short of it -->
+  <path d="M58 40 H80" stroke="#ffe8a3" stroke-width="3" stroke-linecap="round"/>
+  <path d="M58 34 V46 M80 34 V46" stroke="#ffe8a3" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="94" cy="40" r="7" fill="#b0560f" stroke="#ffe8a3" stroke-width="3"/>
+</svg>

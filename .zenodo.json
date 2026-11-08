@@ -1,0 +1,28 @@
+{
+  "title": "finality",
+  "upload_type": "software",
+  "description": "Reproducible research code for banking-sector cyber risk: a rational-choice model of attacker venue selection with an exact finality decomposition, a loss-distribution Monte Carlo with a planted Pareto tail, peaks-over-threshold GPD inference with delta-method, parametric-bootstrap and profile-likelihood intervals, a Monte Carlo audit of their coverage for extreme return levels, and a linear DebtRank model of interbank contagion with its spectral phase transition. Companion software to the preprint \"False Confidence in the Tail: Finality, Extreme-Value Uncertainty, and Contagion in Banking-Sector Cyber Risk\". All parameters are illustrative.",
+  "creators": [
+    {
+      "name": "Chongmankhong, Thanatchon"
+    }
+  ],
+  "license": "mit",
+  "keywords": [
+    "cyber risk",
+    "extreme value theory",
+    "return levels",
+    "profile likelihood",
+    "interval coverage",
+    "systemic risk",
+    "DebtRank"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://thanatchon36.github.io/finality-research/paper/",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-preprint",
+      "scheme": "url"
+    }
+  ]
+}

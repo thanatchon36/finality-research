@@ -17,7 +17,7 @@ from scipy.stats import binomtest, norm
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-sys.path.insert(0, ROOT)
+sys.path.insert(0, os.path.join(ROOT, "src"))
 from finality import attacker  # noqa: E402
 from finality.contagion import build_network  # noqa: E402
 from finality.coverage import GPDDesign  # noqa: E402

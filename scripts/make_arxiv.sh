@@ -1,7 +1,7 @@
 #!/bin/sh
 # Build an arXiv-ready source archive. arXiv does not run BibTeX, so the generated .bbl is included.
 set -e
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../paper"
 latexmk -pdf -interaction=nonstopmode paper.tex
 rm -rf arxiv arxiv-source.zip && mkdir -p arxiv/sections arxiv/tables arxiv/figures
 cp paper.tex paper.bbl refs.bib arxiv/

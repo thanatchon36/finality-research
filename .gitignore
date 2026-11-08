@@ -19,3 +19,5 @@ paper/arxiv-source.zip
 .DS_Store
 .vscode/
 .idea/
+results-quick/
+*:Zone.Identifier

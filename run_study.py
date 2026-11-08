@@ -13,11 +13,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import time
 
 import numpy as np
 
-from finality import attacker, contagion, coverage, evt, lda, plots
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
+from finality import attacker, contagion, coverage, evt, lda, plots  # noqa: E402
 
 SYSTEMIC = 20e9
 

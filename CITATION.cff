@@ -1,23 +1,29 @@
 cff-version: 1.2.0
-message: "If you use this code or the accompanying paper, please cite it as below."
-title: "False Confidence in the Tail: Finality, Extreme-Value Uncertainty, and Contagion in Banking-Sector Cyber Risk"
+message: "Please cite the paper (preferred-citation); if you use the finality package, also cite the software."
+title: "finality: finality, extreme-value uncertainty and contagion in banking-sector cyber risk"
+abstract: >-
+  Reproducible research code for banking-sector cyber risk: a rational-choice
+  model of attacker venue selection with an exact finality decomposition, a
+  loss-distribution Monte Carlo with a planted Pareto tail, peaks-over-threshold
+  GPD inference with delta-method, parametric-bootstrap and profile-likelihood
+  intervals, a Monte Carlo audit of their coverage for extreme return levels,
+  and a linear DebtRank model of interbank contagion.
 type: software
-version: "1.0.0"
-date-released: "2026-11-08"
 authors:
-  - family-names: "Chongmankhong"
-    given-names: "Thanatchon"
-keywords:
-  - cyber risk
-  - extreme value theory
-  - profile likelihood
-  - systemic risk
-  - DebtRank
+  - family-names: Chongmankhong
+    given-names: Thanatchon
+version: 0.1.0
+date-released: 2026-11-08
+license: MIT
+repository-code: "https://github.com/thanatchon36/finality-research"
+url: "https://thanatchon36.github.io/finality-research/paper/"
+keywords: [cyber-risk, extreme-value-theory, return-levels, profile-likelihood, interval-coverage, systemic-risk, debtrank]
 preferred-citation:
-  type: unpublished
+  type: generic
   title: "False Confidence in the Tail: Finality, Extreme-Value Uncertainty, and Contagion in Banking-Sector Cyber Risk"
   authors:
-    - family-names: "Chongmankhong"
-      given-names: "Thanatchon"
+    - family-names: Chongmankhong
+      given-names: Thanatchon
   year: 2026
-  notes: "Preprint"
+  url: "https://thanatchon36.github.io/finality-research/paper/"
+  notes: "Preprint; all model parameters are illustrative."

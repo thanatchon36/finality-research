@@ -17,7 +17,7 @@ from matplotlib.ticker import FuncFormatter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-sys.path.insert(0, ROOT)
+sys.path.insert(0, os.path.join(ROOT, "src"))
 sys.path.insert(0, HERE)
 from figlint import lint  # noqa: E402
 from finality import attacker, contagion, evt, lda  # noqa: E402

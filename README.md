@@ -1,17 +1,36 @@
-# False Confidence in the Tail
+<p align="center"><a href="paper/paper.pdf"><img src="docs/assets/banner.png" alt="finality: the paper's interbank network after a cyber loss at the largest core bank" width="100%"></a></p>
 
-**Finality, extreme-value uncertainty, and contagion in banking-sector cyber risk**
+<p align="center">
+<a href="https://github.com/thanatchon36/finality-research/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/thanatchon36/finality-research/ci.yml?style=flat-square&label=CI&labelColor=0b1020&color=f5a623" alt="CI"></a>
+<a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.10%2B-f5a623?style=flat-square&labelColor=0b1020" alt="Python 3.10+"></a>
+<a href="https://thanatchon36.github.io/finality-research/paper/"><img src="https://img.shields.io/badge/paper-read%20online-f5a623?style=flat-square&labelColor=0b1020" alt="Paper: read online"></a>
+<a href="paper/paper.pdf"><img src="https://img.shields.io/badge/paper-PDF-f5a623?style=flat-square&labelColor=0b1020" alt="Paper PDF"></a>
+<a href="https://thanatchon36.github.io/finality-research/instrument/"><img src="https://img.shields.io/badge/instrument-live-f5a623?style=flat-square&labelColor=0b1020" alt="Interactive instrument"></a>
+<a href="#scope"><img src="https://img.shields.io/badge/parameters-illustrative-b0560f?style=flat-square&labelColor=0b1020" alt="Parameters: illustrative"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ffe8a3?style=flat-square&labelColor=0b1020" alt="License MIT"></a>
+</p>
 
-Code, data and LaTeX source for the preprint by **Thanatchon Chongmankhong** (November 2026).
-Read the paper: [`paper/paper.pdf`](paper/paper.pdf).
+<p align="center">
+📖 <b><a href="https://thanatchon36.github.io/finality-research/paper/">Read the paper online</a></b> ·
+📄 <b><a href="paper/paper.pdf">Download the PDF</a></b> ·
+🎛️ <b><a href="https://thanatchon36.github.io/finality-research/instrument/">Interactive instrument</a></b> ·
+📊 <b><a href="results/results.md">Results</a></b> ·
+📝 <b><a href="CHANGELOG.md">Changelog</a></b>
+</p>
 
-> **Scope.** Defensive, actuarial and policy research. The models describe attacker incentives and aggregate
-> losses only; the repository contains no attack technique. **All parameters are illustrative**: recalibrate
-> with real data before citing any number. "When" is always a probabilistic return period, never a date.
+**Finality, extreme-value uncertainty and contagion in banking-sector cyber risk.** Why do rational attackers
+prefer venues that hold less money? How confidently can one state the return period of a catastrophic
+banking-sector loss from a few decades of data? And how does one large loss spread through interbank exposures?
+The code audits peaks-over-threshold intervals against a planted truth, decomposes attacker payoffs exactly, and
+propagates losses with linear DebtRank.
+
+[![FINALITY, the interactive instrument](docs/assets/instrument.png)](https://thanatchon36.github.io/finality-research/instrument/)
+
+> <a id="scope"></a>**Scope.** Defensive, actuarial and policy research. The models describe attacker incentives
+> and aggregate losses only; the repository contains no attack technique. **All parameters are illustrative**:
+> recalibrate with real data before citing any number. "When" is always a probabilistic return period, never a date.
 
 ## What the paper finds
-
-![Coverage of nominal 95% intervals](paper/figures/fig5_coverage.png)
 
 | Record length | Delta method | Parametric bootstrap | Profile likelihood |
 |---|---:|---:|---:|
@@ -33,55 +52,89 @@ Read the paper: [`paper/paper.pdf`](paper/paper.pdf).
   of the exposure matrix crosses one (0.87 times equity), and systemic importance tracks interconnection,
   not size.
 
-## Quick start
-
-Requires Python 3.10 or later; building the paper also needs a TeX Live installation.
+## Install and quickstart
 
 ```bash
-pip install -r requirements.txt
-make test      # 19 unit tests, about 1 s           (or: python -m pytest -q)
-make quick     # 15-second smoke run of the study   (writes results-quick/)
-make study     # full Monte Carlo study, ~5 min     (or: python run_study.py)
-make paper     # tables, figures and paper/paper.pdf
-make arxiv     # arXiv-ready source archive, .bbl included
+make setup      # uv venv + dependencies (Python 3.12)
+make test       # 19 unit tests, about 1 s
+make quick      # 15-second smoke run of the study   (writes results-quick/)
+make study      # full Monte Carlo study, ~5 min     (resumable; every finished cell is cached)
+make paper      # tables, figures and paper/paper.pdf (needs TeX Live)
 ```
 
-`python run_study.py --budget 60` splits the full study into resumable chunks; every finished cell is cached.
+Without uv: `pip install -e ".[dev,paper]"`, then `python -m pytest -q` and `python run_study.py`.
+`python run_study.py --budget 60` splits the full study into resumable chunks.
+
+| Target | Purpose |
+|---|---|
+| `setup` | Create `.venv` with uv and install the package with its test and paper extras |
+| `test` | 19 unit tests, including a bit-exact check of the network generator against the web instrument |
+| `quick` | Smoke run of the whole study in about 15 seconds → `results-quick/` |
+| `study` | Full Monte Carlo study from master seed 20261108 → `results/` (JSON, Markdown, figures, interval cache) |
+| `figures` | Wilson intervals, McNemar tests and interval scores → `paper/tables/`; vector figures with an overlap check → `paper/figures/` |
+| `paper` | `figures`, then `paper/paper.pdf` (latexmk + pdfLaTeX) |
+| `web` | Web reader → `docs/paper/index.html`, served at <https://thanatchon36.github.io/finality-research/paper/> (pandoc) |
+| `banner` | README banner → `docs/assets/banner.png`, drawn from the paper's interbank network |
+| `arxiv` | arXiv source archive with the `.bbl` included → `paper/arxiv-source.zip` |
+
+## What the code does
+
+1. **Attacker incentives** (`finality.attacker`): a rational-choice model of venue selection. Retained value is a
+   product of breach probability, value, finality and laundering haircut, so the log payoff gap between two
+   venues splits exactly into four shares, with no ordering problem.
+2. **Loss process** (`finality.lda`): Poisson frequency, a log-normal body, a planted Pareto tail and cascades.
+   The planted tail index gives a known truth, computed from two million simulated years, against which every
+   tail estimate is audited.
+3. **Tail inference** (`finality.evt`): peaks-over-threshold GPD fits by maximum likelihood, with delta-method,
+   parametric-bootstrap and profile-likelihood intervals for return levels, and a second-order compound-sum
+   correction from incident-level to annual-aggregate return levels.
+4. **Coverage audit** (`finality.coverage`, `run_study.py`): 1,000 independent records per design cell; every
+   interval of every record is cached in `results/cache/`, so any cell can be resumed and audited record by record.
+5. **Contagion** (`finality.contagion`): a core-periphery interbank network, linear DebtRank, its spectral
+   stability condition and a systemic-importance ranking.
+6. **Paper** (`paper/`): `analysis.py` turns the results into tables and number macros, so no number in the text
+   is typed by hand; `make_figures.py` replays the study's seeds, asserts that it reproduces the stored estimates
+   and checks every figure for overlapping text.
+
+## Research: *False Confidence in the Tail: Finality, Extreme-Value Uncertainty, and Contagion in Banking-Sector Cyber Risk*
+
+The preprint by Thanatchon Chongmankhong (November 2026) is in [`paper/`](paper/): a PDF in
+[`paper/paper.pdf`](paper/paper.pdf), its LaTeX source in [`paper/paper.tex`](paper/paper.tex) and
+[`paper/sections/`](paper/sections/), and a web version at
+<https://thanatchon36.github.io/finality-research/paper/> built from the same source and the same number macros.
+`make arxiv` packs the source with its figures and the generated `.bbl` for arXiv.
+
+- Tables: [`paper/tables/`](paper/tables/) · Figures: [`paper/figures/`](paper/figures/) · Results: [`results/`](results/)
+- Interactive instrument: [`docs/instrument/`](docs/instrument/index.html), the attacker, loss, extreme-value and
+  contagion models in the browser, served at <https://thanatchon36.github.io/finality-research/instrument/>
+
+<p align="center"><img src="paper/figures/fig5_coverage.png" alt="Coverage of nominal 95% intervals for the 1-in-1,000-year loss" width="720"></p>
 
 ## Repository layout
 
 ```
-finality/             Python package
-  attacker.py         rational-choice venue selection; exact log-gap decomposition
-  lda.py              loss-distribution Monte Carlo (Poisson, log-normal body, Pareto tail, cascades)
-  evt.py              peaks-over-threshold GPD: MLE; delta, profile-likelihood and bootstrap intervals
-  contagion.py        interbank network, linear DebtRank, spectral stability, systemic ranking
-  coverage.py         Monte Carlo coverage study with a per-record cache
-  plots.py            quick-look figures for results/
-tests/                19 unit tests
-run_study.py          reproduces every result from master seed 20261108
-results/              results.json, results.md, quick-look figures, per-record interval cache
-paper/                LaTeX source, generated tables and figures, compiled paper.pdf
-  analysis.py         Wilson intervals, McNemar tests, interval scores -> tables and number macros
-  make_figures.py     vector figures; replays the study's seeds and checks every figure for overlaps
-  figlint.py          automated checker: fails if any text touches other text, lines, markers or bars
-  pagecheck.py        page-fill audit of the compiled PDF
-  make_arxiv.sh       builds the arXiv source archive
-docs/index.html       FINALITY, the interactive browser version of the models
+src/finality/
+  attacker.py           rational-choice venue selection; exact log-gap decomposition
+  lda.py                loss-distribution Monte Carlo (Poisson, log-normal body, Pareto tail, cascades)
+  evt.py                peaks-over-threshold GPD: MLE; delta, profile-likelihood and bootstrap intervals
+  contagion.py          interbank network, linear DebtRank, spectral stability, systemic ranking
+  coverage.py           Monte Carlo coverage study with a per-record cache
+  plots.py              quick-look figures for results/
+run_study.py            reproduces every result from master seed 20261108
+results/                results.json, results.md, quick-look figures, per-record interval cache
+paper/                  paper.tex, sections/, refs.bib, tables/ and figures/ (generated), paper.pdf
+  analysis.py           Wilson intervals, McNemar tests, interval scores -> tables and number macros
+  make_figures.py       vector figures; replays the study's seeds and checks every figure for overlaps
+  figlint.py            fails if any text touches other text, lines, markers or bars
+  pagecheck.py          page-fill audit of the compiled PDF
+  reader.html           pandoc template of the web reader
+scripts/
+  paper_web.py          web reader: paper.tex -> docs/paper/index.html
+  make_banner.py        README banner from the paper's interbank network
+  make_arxiv.sh         arXiv source archive
+docs/                   GitHub Pages: paper/ (web reader), instrument/ (FINALITY), assets/
+tests/                  attacker and loss models, EVT, contagion
 ```
-
-## Reproducibility
-
-- Every number in the paper is generated into `paper/tables/numbers.tex`; nothing is typed by hand.
-- `paper/make_figures.py` asserts that it reproduces the stored estimates exactly before drawing.
-- The network generator is a bit-exact port of the web instrument's random number generator, and a test
-  pins the instrument's published numbers, so the JavaScript and Python implementations agree.
-- `results/cache/` stores every interval of every simulated record, so any coverage cell can be audited.
-
-## Interactive instrument
-
-`docs/index.html` runs the attacker, loss, extreme-value and contagion models in the browser. To publish it,
-open **Settings → Pages**, choose **Deploy from a branch**, then select the `main` branch and the `/docs` folder.
 
 ## Using real data
 
@@ -92,9 +145,17 @@ model = fit_pot(incident_losses, record_years=25, u_quantile=0.90, annual=annual
 print(return_level(model, 1000), rl_ci_profile(model, 1000))
 ```
 
-## Citation
+## Limitations
+Illustrative calibration throughout; stationarity of the loss process; residual undercoverage with about 15
+exceedances; threshold choice; and the full loss pass-through of linear DebtRank. See paper §7.
 
-GitHub shows a **Cite this repository** button generated from [`CITATION.cff`](CITATION.cff). In BibTeX:
+## Notes
+The simulation code, a first draft of the text and the figures were prepared with the assistance of an AI system
+(Claude, Anthropic). The author is responsible for the content, including the verification of every reference in
+`paper/refs.bib`.
+
+## Citation
+See [`CITATION.cff`](CITATION.cff) (GitHub's **Cite this repository** button). License: MIT.
 
 ```bibtex
 @misc{chongmankhong2026false,
@@ -102,14 +163,7 @@ GitHub shows a **Cite this repository** button generated from [`CITATION.cff`](C
   title  = {False Confidence in the Tail: Finality, Extreme-Value Uncertainty,
             and Contagion in Banking-Sector Cyber Risk},
   year   = {2026},
-  note   = {Preprint}
+  note   = {Preprint},
+  url    = {https://thanatchon36.github.io/finality-research/paper/}
 }
 ```
-
-## Notes
-
-- The simulation code, a first draft of the text and the figures were prepared with the assistance of an AI
-  system (Claude, Anthropic). The author is responsible for the content, including the verification of every
-  reference in `paper/refs.bib`.
-- Limitations are set out in Section 7 of the paper: illustrative calibration, stationarity, residual
-  undercoverage with about 15 exceedances, threshold choice, and the full loss pass-through of linear DebtRank.

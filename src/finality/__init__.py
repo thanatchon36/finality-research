@@ -9,4 +9,4 @@ plots       publication figures
 
 Every default parameter is ILLUSTRATIVE. Recalibrate before citing any number.
 """
-__version__ = "1.0.0"
+__version__ = "0.1.0"
