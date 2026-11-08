@@ -56,7 +56,8 @@ Banking-Sector Cyber Risk* by Thanatchon Chongmankhong ([read online](https://th
 The paper asks how confidently one can state the return period of a catastrophic banking-sector cyber loss from a
 few decades of data. A loss process with a planted Pareto tail gives a known truth; 36,000 interval estimates for
 the 1-in-100 and 1-in-1,000-year loss are scored against it. A rational-choice attacker model and a linear
-DebtRank interbank network complete the framework. Code: <https://github.com/thanatchon36/finality-research>.
+DebtRank interbank network complete the framework. Code: <https://github.com/thanatchon36/finality-research>;
+archived on Zenodo: [10.5281/zenodo.24050729](https://doi.org/10.5281/zenodo.24050729).
 
 *Independent personal research. Defensive, actuarial and policy research: the models describe attacker incentives
 and aggregate losses only, and the dataset contains no attack technique.*
@@ -113,6 +114,7 @@ CC BY 4.0 (`LICENSE`). The code that generates the data is MIT licensed.
   title  = {False Confidence in the Tail: Finality, Extreme-Value Uncertainty,
             and Contagion in Banking-Sector Cyber Risk},
   year   = {2026},
+  doi    = {10.5281/zenodo.24050729},
   url    = {https://thanatchon36.github.io/finality-research/paper/},
   note   = {Preprint; all parameters are illustrative}
 }

@@ -9,6 +9,7 @@
 <a href="#scope"><img src="https://img.shields.io/badge/parameters-illustrative-b0560f?style=flat-square&labelColor=0b1020" alt="Parameters: illustrative"></a>
 <a href="https://huggingface.co/datasets/thanatchon36/finality-research"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20dataset-finality--research-f5a623?style=flat-square&labelColor=0b1020" alt="Hugging Face dataset"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ffe8a3?style=flat-square&labelColor=0b1020" alt="License MIT"></a>
+<a href="https://zenodo.org/badge/latestdoi/1450099996"><img src="https://zenodo.org/badge/1450099996.svg" alt="DOI"></a>
 </p>
 
 <p align="center">
@@ -162,7 +163,8 @@ The simulation code, a first draft of the text and the figures were prepared wit
 `paper/refs.bib`.
 
 ## Citation
-See [`CITATION.cff`](CITATION.cff) (GitHub's **Cite this repository** button). License: MIT.
+See [`CITATION.cff`](CITATION.cff) (GitHub's **Cite this repository** button); each release is archived on Zenodo
+([10.5281/zenodo.24050729](https://doi.org/10.5281/zenodo.24050729), DOI badge above). License: MIT.
 
 ```bibtex
 @misc{chongmankhong2026false,
@@ -171,6 +173,7 @@ See [`CITATION.cff`](CITATION.cff) (GitHub's **Cite this repository** button). L
             and Contagion in Banking-Sector Cyber Risk},
   year   = {2026},
   note   = {Preprint},
+  doi    = {10.5281/zenodo.24050729},
   url    = {https://thanatchon36.github.io/finality-research/paper/}
 }
 ```

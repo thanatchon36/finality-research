@@ -14,6 +14,7 @@ authors:
     given-names: Thanatchon
 version: 0.1.0
 date-released: 2026-11-08
+doi: 10.5281/zenodo.24050729
 license: MIT
 repository-code: "https://github.com/thanatchon36/finality-research"
 url: "https://thanatchon36.github.io/finality-research/paper/"
