@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: setup test quick study figures paper web banner arxiv all clean
+.PHONY: setup test quick study figures paper web banner arxiv hf hf-upload all clean
 
 setup:          ## create venv and install the package (needs uv)
 	uv venv .venv --python 3.12
@@ -31,8 +31,14 @@ banner:         ## README banner -> docs/assets/banner.png
 arxiv:          ## arXiv source archive, .bbl included -> paper/arxiv-source.zip
 	sh scripts/make_arxiv.sh
 
+hf:             ## Hugging Face dataset -> hf/ (regenerated from the seeds, checked against results/)
+	$(PY) scripts/export_hf.py
+
+hf-upload: hf   ## upload hf/ to huggingface.co/datasets/thanatchon36/finality-research (needs hf auth login)
+	hf upload thanatchon36/finality-research hf . --repo-type dataset --commit-message "Update dataset"
+
 all: study paper web
 
 clean:
-	rm -rf results-quick paper/arxiv paper/arxiv-source.zip
+	rm -rf results-quick hf paper/arxiv paper/arxiv-source.zip
 	cd paper && rm -f *.aux *.log *.out *.fls *.fdb_latexmk *.bbl *.blg *.synctex.gz

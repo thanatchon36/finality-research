@@ -26,6 +26,7 @@ OUT = ROOT / "docs" / "paper"
 REPO_URL = "https://github.com/thanatchon36/finality-research"
 PAPER_URL = "https://thanatchon36.github.io/finality-research/paper/"
 INSTRUMENT_URL = "https://thanatchon36.github.io/finality-research/instrument/"
+DATA_URL = "https://huggingface.co/datasets/thanatchon36/finality-research"
 DESIGN_PNG = PAPER / "figures" / "fig1_design.png"
 
 # (label, style, finding, detail) with \macro placeholders resolved from paper/tables/numbers.tex.
@@ -312,6 +313,7 @@ def build() -> Path:
         '<li><a href="paper.pdf">Download PDF</a></li>'
         f'<li><a href="{REPO_URL}">Code and replication</a></li>'
         f'<li><a href="{INSTRUMENT_URL}">Interactive instrument</a></li>'
+        f'<li><a href="{DATA_URL}">Data (Hugging Face)</a></li>'
     )
     full_title = f"{fm['title']}: {fm['subtitle']}"
     bib = (

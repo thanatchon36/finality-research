@@ -25,4 +25,9 @@ All notable changes to this project are documented here. The format follows
   `make arxiv` writes the source archive with the `.bbl` included.
 - Web reader of the paper (`docs/paper/`, built by `make web`) and FINALITY, the interactive browser instrument
   (`docs/instrument/`), both served by GitHub Pages.
+- Dataset on Hugging Face, [`thanatchon36/finality-research`](https://huggingface.co/datasets/thanatchon36/finality-research)
+  (CC BY 4.0), built by `make hf`: all 36,000 interval estimates of the coverage study scored against the truth,
+  200,000 simulated years of losses, the true return-level curve, the two single records, the attacker venues and the
+  interbank network with its cascades. `scripts/export_hf.py` regenerates every file from the seeds and checks it
+  against `results/results.json`.
 - 19 unit tests and CI on every push.

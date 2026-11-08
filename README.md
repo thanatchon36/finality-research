@@ -7,6 +7,7 @@
 <a href="paper/paper.pdf"><img src="https://img.shields.io/badge/paper-PDF-f5a623?style=flat-square&labelColor=0b1020" alt="Paper PDF"></a>
 <a href="https://thanatchon36.github.io/finality-research/instrument/"><img src="https://img.shields.io/badge/instrument-live-f5a623?style=flat-square&labelColor=0b1020" alt="Interactive instrument"></a>
 <a href="#scope"><img src="https://img.shields.io/badge/parameters-illustrative-b0560f?style=flat-square&labelColor=0b1020" alt="Parameters: illustrative"></a>
+<a href="https://huggingface.co/datasets/thanatchon36/finality-research"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20dataset-finality--research-f5a623?style=flat-square&labelColor=0b1020" alt="Hugging Face dataset"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-ffe8a3?style=flat-square&labelColor=0b1020" alt="License MIT"></a>
 </p>
 
@@ -15,6 +16,7 @@
 📄 <b><a href="paper/paper.pdf">Download the PDF</a></b> ·
 🎛️ <b><a href="https://thanatchon36.github.io/finality-research/instrument/">Interactive instrument</a></b> ·
 📊 <b><a href="results/results.md">Results</a></b> ·
+🤗 <b><a href="https://huggingface.co/datasets/thanatchon36/finality-research">Dataset</a></b> ·
 📝 <b><a href="CHANGELOG.md">Changelog</a></b>
 </p>
 
@@ -75,6 +77,7 @@ Without uv: `pip install -e ".[dev,paper]"`, then `python -m pytest -q` and `pyt
 | `paper` | `figures`, then `paper/paper.pdf` (latexmk + pdfLaTeX) |
 | `web` | Web reader → `docs/paper/index.html`, served at <https://thanatchon36.github.io/finality-research/paper/> (pandoc) |
 | `banner` | README banner → `docs/assets/banner.png`, drawn from the paper's interbank network |
+| `hf` | Hugging Face dataset → `hf/`, regenerated from the seeds and checked against `results/`; `hf-upload` publishes it |
 | `arxiv` | arXiv source archive with the `.bbl` included → `paper/arxiv-source.zip` |
 
 ## What the code does
@@ -105,6 +108,9 @@ The preprint by Thanatchon Chongmankhong (November 2026) is in [`paper/`](paper/
 `make arxiv` packs the source with its figures and the generated `.bbl` for arXiv.
 
 - Tables: [`paper/tables/`](paper/tables/) · Figures: [`paper/figures/`](paper/figures/) · Results: [`results/`](results/)
+- Dataset on Hugging Face: [`thanatchon36/finality-research`](https://huggingface.co/datasets/thanatchon36/finality-research), with all
+  36,000 interval estimates of the coverage study scored against the truth, 200,000 simulated years of losses, the true
+  return-level curve, the two single records, the attacker venues and the interbank network with its cascades (all simulated)
 - Interactive instrument: [`docs/instrument/`](docs/instrument/index.html), the attacker, loss, extreme-value and
   contagion models in the browser, served at <https://thanatchon36.github.io/finality-research/instrument/>
 
@@ -132,6 +138,7 @@ scripts/
   paper_web.py          web reader: paper.tex -> docs/paper/index.html
   make_banner.py        README banner from the paper's interbank network
   make_arxiv.sh         arXiv source archive
+  export_hf.py          Hugging Face dataset (card: hf_README.md)
 docs/                   GitHub Pages: paper/ (web reader), instrument/ (FINALITY), assets/
 tests/                  attacker and loss models, EVT, contagion
 ```
