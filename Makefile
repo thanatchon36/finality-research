@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: setup test quick study figures paper web banner arxiv hf hf-upload all clean
+.PHONY: setup test quick study figures paper web banner poster arxiv hf hf-upload all clean
 
 setup:          ## create venv and install the package (needs uv)
 	uv venv .venv --python 3.12
@@ -27,6 +27,9 @@ web:            ## web reader -> docs/paper/index.html (pandoc; copies the curre
 
 banner:         ## README banner -> docs/assets/banner.png
 	$(PY) scripts/make_banner.py
+
+poster:         ## LinkedIn poster -> docs/assets/linkedin_poster.png (real intervals from the coverage study)
+	$(PY) scripts/make_poster.py
 
 arxiv:          ## arXiv source archive, .bbl included -> paper/arxiv-source.zip
 	sh scripts/make_arxiv.sh

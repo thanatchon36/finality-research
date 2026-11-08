@@ -78,6 +78,7 @@ Without uv: `pip install -e ".[dev,paper]"`, then `python -m pytest -q` and `pyt
 | `paper` | `figures`, then `paper/paper.pdf` (latexmk + pdfLaTeX) |
 | `web` | Web reader → `docs/paper/index.html`, served at <https://thanatchon36.github.io/finality-research/paper/> (pandoc) |
 | `banner` | README banner → `docs/assets/banner.png`, drawn from the paper's interbank network |
+| `poster` | LinkedIn poster → `docs/assets/linkedin_poster.png`, with real intervals from the coverage study |
 | `hf` | Hugging Face dataset → `hf/`, regenerated from the seeds and checked against `results/`; `hf-upload` publishes it |
 | `arxiv` | arXiv source archive with the `.bbl` included → `paper/arxiv-source.zip` |
 
@@ -138,6 +139,7 @@ paper/                  paper.tex, sections/, refs.bib, tables/ and figures/ (ge
 scripts/
   paper_web.py          web reader: paper.tex -> docs/paper/index.html
   make_banner.py        README banner from the paper's interbank network
+  make_poster.py        LinkedIn poster from the coverage study
   make_arxiv.sh         arXiv source archive
   export_hf.py          Hugging Face dataset (card: hf_README.md)
 docs/                   GitHub Pages: paper/ (web reader), instrument/ (FINALITY), assets/

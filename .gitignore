@@ -22,3 +22,4 @@ paper/arxiv-source.zip
 results-quick/
 *:Zone.Identifier
 hf/
+.cache/
